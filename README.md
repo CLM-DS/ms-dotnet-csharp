@@ -1,4 +1,4 @@
 # .NET Microservices Sample
 
-![](img/eShopOnContainers-architecture.png)
+![](img/microservices-netcore.png)
 
