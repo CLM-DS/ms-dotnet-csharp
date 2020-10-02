@@ -1,0 +1,16 @@
+/root/templates/events/EventBus/bin/Debug/netstandard2.1/EventBus.deps.json
+/root/templates/events/EventBus/bin/Debug/netstandard2.1/EventBus.dll
+/root/templates/events/EventBus/bin/Debug/netstandard2.1/EventBus.pdb
+/root/templates/events/EventBus/obj/Debug/netstandard2.1/EventBus.csprojAssemblyReference.cache
+/root/templates/events/EventBus/obj/Debug/netstandard2.1/EventBus.AssemblyInfoInputs.cache
+/root/templates/events/EventBus/obj/Debug/netstandard2.1/EventBus.AssemblyInfo.cs
+/root/templates/events/EventBus/obj/Debug/netstandard2.1/EventBus.dll
+/root/templates/events/EventBus/obj/Debug/netstandard2.1/EventBus.pdb
+/root/templates/microservices/events/EventBus/bin/Debug/netstandard2.1/EventBus.deps.json
+/root/templates/microservices/events/EventBus/bin/Debug/netstandard2.1/EventBus.dll
+/root/templates/microservices/events/EventBus/bin/Debug/netstandard2.1/EventBus.pdb
+/root/templates/microservices/events/EventBus/obj/Debug/netstandard2.1/EventBus.csprojAssemblyReference.cache
+/root/templates/microservices/events/EventBus/obj/Debug/netstandard2.1/EventBus.AssemblyInfoInputs.cache
+/root/templates/microservices/events/EventBus/obj/Debug/netstandard2.1/EventBus.AssemblyInfo.cs
+/root/templates/microservices/events/EventBus/obj/Debug/netstandard2.1/EventBus.dll
+/root/templates/microservices/events/EventBus/obj/Debug/netstandard2.1/EventBus.pdb
