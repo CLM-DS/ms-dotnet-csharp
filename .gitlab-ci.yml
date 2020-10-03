@@ -1,12 +1,8 @@
-# Habilitar la cache general del repositorio
-cache:
-  paths:
-    - node_modules/
-
 stages:
   - build
   - test
   - codequality
+  - package
   - validate
 
 build:
@@ -108,3 +104,39 @@ functional_test:
 #     - klar clmdevops/iluvcoffee
 #   tags:
 #     - kubernetes
+
+package_docker:
+  image: docker:stable
+  stage: package
+  services:
+    - docker:stable-dind
+  variables:
+    DOCK_REG_GRP: "api"
+    DOCK_IMG: "basket-api"
+  before_script:
+    - echo "Obteniendo la version de la app"
+    - |
+      # Procesando proyectos .NetCore C#
+      if [ -f package.json ]; then export DOCK_VERSION=$(grep '<Version>' \
+            *.csproj | cut -f2 -d"<" | cut -f2 -d">"); fi
+    # Login en docker registry
+    - echo "Construyendo la imagen DOCKER de la APP"
+    - docker login
+        -u ${DOCK_REG_USER_GCP}
+        -p "$(cat $DOCK_REG_PWD_GCP)"
+        ${DOCK_REG_GCP}
+  script:
+    - |
+      echo 'Crear tag de imagen docker'
+      docker build \
+        -t ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} \
+        ${DOCKER_BUILD_ARGS} ${DOCKER_FILE_CMD}
+      docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
+      if [ "$DOCKER_LATEST" = true ] ; then
+        echo 'Crear tag de imagen docker latest'
+        docker tag ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} \
+            ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:latest
+        docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:latest
+      fi
+  tags:
+    - kubernetes
