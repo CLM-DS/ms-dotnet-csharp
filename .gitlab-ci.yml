@@ -131,8 +131,7 @@ package_docker:
     - |
       echo 'Crear tag de imagen docker'
       docker build \
-        -t ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} \
-        ${DOCKER_BUILD_ARGS} ${DOCKER_FILE_CMD}
+        -t ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} .
       docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
       if [ "$DOCKER_LATEST" = true ] ; then
         echo 'Crear tag de imagen docker latest'
