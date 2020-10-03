@@ -106,15 +106,18 @@ stages:
 #     - kubernetes
 
 package_docker:
-  image: docker:stable
+  image: docker:19.03.12
   stage: package
   services:
-    - docker:stable-dind
+    - docker:19.03.12-dind
   variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
     DOCK_REG_GRP: "api"
     DOCK_IMG: "basket-api"
   before_script:
+    - docker info
     - echo "Obteniendo la version de la app"
     - |
       # Procesando proyectos .NetCore C#
@@ -130,8 +133,7 @@ package_docker:
   script:
     - |
       echo 'Crear tag de imagen docker'
-      docker build \
-        -t ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} .
+      docker build -t ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} .
       docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
       if [ "$DOCKER_LATEST" = true ] ; then
         echo 'Crear tag de imagen docker latest'
