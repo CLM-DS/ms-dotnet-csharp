@@ -111,6 +111,7 @@ package_docker:
   services:
     - docker:stable-dind
   variables:
+    DOCKER_DRIVER: overlay2
     DOCK_REG_GRP: "api"
     DOCK_IMG: "basket-api"
   before_script:
