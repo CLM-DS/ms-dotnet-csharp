@@ -1,0 +1,109 @@
+# Habilitar la cache general del repositorio
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - test
+  - codequality
+  - validate
+
+build:
+  image: mcr.microsoft.com/dotnet/core/sdk:3.1
+  stage: build
+  before_script:
+    - cd microservices/Basket
+    - dotnet restore
+  script:
+    - cd 
+    - dotnet build
+  tags:
+    - kubernetes
+
+unit_test:
+  image: mcr.microsoft.com/dotnet/core/sdk:3.1
+  stage: test
+  before_script:
+    - cd microservices/Basket
+  script:
+    - dotnet test Basket.UnitTests
+  tags:
+    - kubernetes
+
+functional_test:
+  image: mcr.microsoft.com/dotnet/core/sdk:3.1
+  services:
+    - rabbitmq:3
+    - redis:latest
+  stage: test
+  before_script:
+    - cd microservices/Basket
+  script:
+    - dotnet test Basket.FunctionalTests
+  tags:
+    - kubernetes
+
+# # JOB para revision de calidad del codigo
+# sonar_test:
+#   image: sonarsource/sonar-scanner-cli
+#   stage: codequality
+#   # allow_failure: true
+#   variables:
+#     SONAR_SOURCE: "."
+#     SONAR_TEST: "test"
+#     SONAR_TEST_INCLUSIONS: "**/test/**,**/test-data/**"
+#     SONAR_COVER_REPORTS: "reports/coverage/lcov.info"
+#   before_script:
+#     # Validar que existe el archivo sonar-project.properties requerido.
+#     - |
+#       if [ -f sonar-project.properties ]
+#         then
+#           echo "Existe archivo sonar-project.properties."
+#           cat sonar-project.properties
+#         else
+#           echo "No existe archivo sonar-project.properties." ; exit 1
+#       fi
+#      # Validar la existencia de la variable sonar_source.
+#     - if [ -z "$SONAR_SOURCE" ]; then export SONAR_SOURCE="."; fi
+#     # Tipos administidos: NodeJS, Gradle, Maven
+#     - echo "Obteniendo la version de la app"
+#     - |
+#       # Procesando proyectos NodeJS
+#       if [ -f package.json ]; then export SONAR_PROJECT_VERSION=$(grep 'version' \
+#             package.json | cut -f2 -d":" | cut -f2 -d\"); fi
+#   script:
+#     # - ls -R
+#     - sonar-scanner --debug
+#   needs:
+#     - job: unit_test
+#       artifacts: true
+#     - job: coverage_test
+#       artifacts: true
+#   tags:
+#     - kubernetes
+
+
+# detect_secrets:
+#   image: clmdevops/whispers:1.1.2
+#   stage: test
+#   script:
+#     - whispers --config config-whispers-example.yml . >> whispers-log.json
+#     - jq . whispers-log.json -C
+#     # TODO: Falta establecer umbrales y tratar de validarlos para mostrar error en el job cuando ocurren
+#   tags:
+#     - kubernetes
+
+# validate_docker:
+#   image: clmdevops/klar:2.4.0
+#   stage: validate
+#   variables:
+#     CLAIR_ADDR: "clairsvc"
+#     CLAIR_OUTPUT: "Low"
+#     CLAIR_THRESHOLD: "10"
+#     FORMAT_OUTPUa: "table"
+#     # DOCKER_USER: "lmaina"
+#     # DOCKER_PASSWORD: "ASDASDA"
+#   script:
+#     - klar clmdevops/iluvcoffee
+#   tags:
+#     - kubernetes
