@@ -16,7 +16,7 @@ build:
     - cd microservices/Basket
     - dotnet restore
   script:
-    - cd 
+    - pwd
     - dotnet build
   tags:
     - kubernetes
