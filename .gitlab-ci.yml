@@ -4,6 +4,7 @@ cache:
     - node_modules/
 
 stages:
+  - build
   - test
   - codequality
   - validate
