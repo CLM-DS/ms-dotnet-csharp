@@ -5,40 +5,40 @@ stages:
   - package
   - validate
 
-build:
-  image: mcr.microsoft.com/dotnet/core/sdk:3.1
-  stage: build
-  before_script:
-    - cd microservices/Basket
-    - dotnet restore
-  script:
-    - pwd
-    - dotnet build
-  tags:
-    - kubernetes
+# build:
+#   image: mcr.microsoft.com/dotnet/core/sdk:3.1
+#   stage: build
+#   before_script:
+#     - cd microservices/Basket
+#     - dotnet restore
+#   script:
+#     - pwd
+#     - dotnet build
+#   tags:
+#     - kubernetes
 
-unit_test:
-  image: mcr.microsoft.com/dotnet/core/sdk:3.1
-  stage: test
-  before_script:
-    - cd microservices/Basket
-  script:
-    - dotnet test Basket.UnitTests
-  tags:
-    - kubernetes
+# unit_test:
+#   image: mcr.microsoft.com/dotnet/core/sdk:3.1
+#   stage: test
+#   before_script:
+#     - cd microservices/Basket
+#   script:
+#     - dotnet test Basket.UnitTests
+#   tags:
+#     - kubernetes
 
-functional_test:
-  image: mcr.microsoft.com/dotnet/core/sdk:3.1
-  services:
-    - rabbitmq:3
-    - redis:latest
-  stage: test
-  before_script:
-    - cd microservices/Basket
-  script:
-    - dotnet test Basket.FunctionalTests
-  tags:
-    - kubernetes
+# functional_test:
+#   image: mcr.microsoft.com/dotnet/core/sdk:3.1
+#   services:
+#     - rabbitmq:3
+#     - redis:latest
+#   stage: test
+#   before_script:
+#     - cd microservices/Basket
+#   script:
+#     - dotnet test Basket.FunctionalTests
+#   tags:
+#     - kubernetes
 
 # # JOB para revision de calidad del codigo
 # sonar_test:
@@ -115,10 +115,12 @@ package_docker:
     DOCK_IMG: "basket-api"
   before_script:
     - echo "Obteniendo la version de la app"
+    - cd microservices/Basket/Basket.API
     - |
       # Procesando proyectos .NetCore C#
       if [ -f package.json ]; then export DOCK_VERSION=$(grep '<Version>' \
             *.csproj | cut -f2 -d"<" | cut -f2 -d">"); fi
+      echo $DOCK_VERSION
     # Login en docker registry
     - echo "Construyendo la imagen DOCKER de la APP"
     - docker login
