@@ -1,3 +1,10 @@
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+  DOCK_REG_GRP: "api"
+  DOCK_IMG: "basket-api"
+
 stages:
   - build
   - test
@@ -90,56 +97,57 @@ stages:
 #   tags:
 #     - kubernetes
 
-# validate_docker:
-#   image: clmdevops/klar:2.4.0
-#   stage: validate
-#   variables:
-#     CLAIR_ADDR: "clairsvc"
-#     CLAIR_OUTPUT: "Low"
-#     CLAIR_THRESHOLD: "10"
-#     FORMAT_OUTPUa: "table"
-#     # DOCKER_USER: "lmaina"
-#     # DOCKER_PASSWORD: "ASDASDA"
+# package_docker:
+#   image: docker:19.03.12
+#   stage: package
+#   services:
+#     - docker:19.03.12-dind
+#   before_script:
+#     - docker info
+#     - echo "Obteniendo la version de la app"
+#     - |
+#       # Procesando proyectos .NetCore C#
+#       export DOCK_VERSION=$(grep '<Version>' microservices/Basket/Basket.API/*.csproj \
+#             | cut -f2 -d"<" | cut -f2 -d">")
+#       echo $DOCK_VERSION
+#     # Login en docker registry
+#     - echo "Construyendo la imagen DOCKER de la APP"
+#     - docker login
+#         -u ${DOCK_REG_USER_GCP}
+#         -p "$(cat $DOCK_REG_PWD_GCP)"
+#         ${DOCK_REG_GCP}
 #   script:
-#     - klar clmdevops/iluvcoffee
+#     - |
+#       echo 'Crear tag de imagen docker'
+#       docker build -t ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} .
+#       docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
+#       if [ "$DOCKER_LATEST" = true ] ; then
+#         echo 'Crear tag de imagen docker latest'
+#         docker tag ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} \
+#             ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:latest
+#         docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:latest
+#       fi
 #   tags:
 #     - kubernetes
 
-package_docker:
-  image: docker:19.03.12
-  stage: package
-  services:
-    - docker:19.03.12-dind
+validate_docker:
+  image: clmdevops/klar:2.4.0
+  stage: validate
   variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
-    DOCKER_DRIVER: overlay2
-    DOCK_REG_GRP: "api"
-    DOCK_IMG: "basket-api"
+    CLAIR_ADDR: "clairsvc"
+    CLAIR_OUTPUT: "Low"
+    CLAIR_THRESHOLD: "10"
+    FORMAT_OUTPUa: "table"
+    DOCKER_USER: $DOCK_REG_USER_GCP
   before_script:
-    - docker info
+    - export DOCKER_PASSWORD=$(cat $DOCK_REG_PWD_GCP)
     - echo "Obteniendo la version de la app"
     - |
       # Procesando proyectos .NetCore C#
       export DOCK_VERSION=$(grep '<Version>' microservices/Basket/Basket.API/*.csproj \
             | cut -f2 -d"<" | cut -f2 -d">")
       echo $DOCK_VERSION
-    # Login en docker registry
-    - echo "Construyendo la imagen DOCKER de la APP"
-    - docker login
-        -u ${DOCK_REG_USER_GCP}
-        -p "$(cat $DOCK_REG_PWD_GCP)"
-        ${DOCK_REG_GCP}
   script:
-    - |
-      echo 'Crear tag de imagen docker'
-      docker build -t ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} .
-      docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
-      if [ "$DOCKER_LATEST" = true ] ; then
-        echo 'Crear tag de imagen docker latest'
-        docker tag ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} \
-            ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:latest
-        docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:latest
-      fi
+    - klar ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
   tags:
     - kubernetes
