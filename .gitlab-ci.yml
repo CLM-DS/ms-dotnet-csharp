@@ -16,7 +16,7 @@ stages:
 
 fetch-semantic-version:
   # Requires Node >= 10.13 version
-  image: node:14-alpine
+  image: node:14
   stage: fetch-version
   only:
     refs:
@@ -191,7 +191,7 @@ build:
 #     - kubernetes
 
 release:
-  image: node:14-alpine
+  image: node:14
   stage: release
   only:
     refs:
