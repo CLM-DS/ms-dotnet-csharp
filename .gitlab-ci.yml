@@ -115,10 +115,9 @@ package_docker:
     DOCK_IMG: "basket-api"
   before_script:
     - echo "Obteniendo la version de la app"
-    - cd microservices/Basket/Basket.API
     - |
       # Procesando proyectos .NetCore C#
-      export DOCK_VERSION=$(grep '<Version>' *.csproj \
+      export DOCK_VERSION=$(grep '<Version>' microservices/Basket/Basket.API/*.csproj \
             | cut -f2 -d"<" | cut -f2 -d">")
       echo $DOCK_VERSION
     # Login en docker registry
