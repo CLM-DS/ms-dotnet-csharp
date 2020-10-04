@@ -1,4 +1,7 @@
-bin/
-obj/
-out/
 TestResults/
+.gitignore
+.gitlab-ci.yml
+.releaserc.yml
+CHANGELOG.md
+README.md
+sonar-project.properties
