@@ -71,40 +71,40 @@ build:
   tags:
     - kubernetes
 
-unit_test:
-  image: mcr.microsoft.com/dotnet/core/sdk:3.1
-  stage: test
-  script:
-    - dotnet test $SOLUTION_DIRECTORY/Basket.UnitTests --no-restore
-  only:
-    refs:
-    - branches
-  except:
-    refs:
-    - tags
-    variables:
-      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-  tags:
-    - kubernetes
+# unit_test:
+#   image: mcr.microsoft.com/dotnet/core/sdk:3.1
+#   stage: test
+#   script:
+#     - dotnet test $SOLUTION_DIRECTORY/Basket.UnitTests
+#   only:
+#     refs:
+#     - branches
+#   except:
+#     refs:
+#     - tags
+#     variables:
+#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+#   tags:
+#     - kubernetes
 
-functional_test:
-  image: mcr.microsoft.com/dotnet/core/sdk:3.1
-  services:
-    - rabbitmq:3
-    - redis:latest
-  stage: test
-  script:
-    - dotnet test $SOLUTION_DIRECTORY/Basket.FunctionalTests --no-restore
-  only:
-    refs:
-    - branches
-  except:
-    refs:
-    - tags
-    variables:
-      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-  tags:
-    - kubernetes
+# functional_test:
+#   image: mcr.microsoft.com/dotnet/core/sdk:3.1
+#   services:
+#     - rabbitmq:3
+#     - redis:latest
+#   stage: test
+#   script:
+#     - dotnet test $SOLUTION_DIRECTORY/Basket.FunctionalTests
+#   only:
+#     refs:
+#     - branches
+#   except:
+#     refs:
+#     - tags
+#     variables:
+#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+#   tags:
+#     - kubernetes
 
 # # JOB para revision de calidad del codigo
 # sonar_test:
