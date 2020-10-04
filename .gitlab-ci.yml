@@ -113,6 +113,7 @@ sonar_test:
     # Tipos administidos: NodeJS, Gradle, Maven
     - echo "Obteniendo la version de la app"
     - SONAR_PROJECT_VERSION=$(cat VERSION.txt)
+    - echo $SONAR_PROJECT_VERSION
   script:
     - sonar-scanner --debug
   tags:
@@ -138,12 +139,13 @@ package_docker:
     - docker info
     - echo "Obteniendo la version de la app"
     - DOCK_VERSION=$(cat VERSION.txt)
-    # # Login en docker registry
-    # - echo "Construyendo la imagen DOCKER de la APP"
-    # - docker login
-    #     -u ${DOCK_REG_USER_GCP}
-    #     -p "$(cat $DOCK_REG_PWD_GCP)"
-    #     ${DOCK_REG_GCP}
+    - echo $DOCK_VERSION
+    # Login en docker registry
+    - echo "Construyendo la imagen DOCKER de la APP"
+    - docker login
+        -u ${DOCK_REG_USER_GCP}
+        -p "$(cat $DOCK_REG_PWD_GCP)"
+        ${DOCK_REG_GCP}
   script:
     - |
       echo 'Crear tag de imagen docker'
@@ -171,6 +173,7 @@ validate_docker:
     - export DOCKER_PASSWORD=$(cat $DOCK_REG_PWD_GCP)
     - echo "Obteniendo la version de la app"
     - DOCK_VERSION=$(cat VERSION.txt)
+    - echo $DOCK_VERSION    
   script:
     - klar ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
   tags:
