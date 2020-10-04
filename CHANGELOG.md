@@ -1,3 +1,10 @@
+## [1.2.2](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.2.1...v1.2.2) (2020-10-04)
+
+
+### Bug Fixes
+
+* test deploy, testing, rollback jobs ([7bc1bb8](https://gitlab.com/apiservice-developments/testing-microservices/commit/7bc1bb8b648b1b6f8e61a7812e7a284c3c529f30))
+
 ## [1.2.1](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.2.0...v1.2.1) (2020-10-04)
 
 
