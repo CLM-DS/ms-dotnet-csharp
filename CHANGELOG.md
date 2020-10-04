@@ -1,3 +1,10 @@
+## [1.2.1](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.2.0...v1.2.1) (2020-10-04)
+
+
+### Bug Fixes
+
+* pipeline jobs except ([6bfb2e2](https://gitlab.com/apiservice-developments/testing-microservices/commit/6bfb2e2be6e13d7052ba99294780f5b6afd9ab61))
+
 # [1.2.0](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.1.0...v1.2.0) (2020-10-04)
 
 
