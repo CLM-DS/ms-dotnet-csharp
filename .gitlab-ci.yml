@@ -7,6 +7,7 @@ variables:
   OBJECTS_DIRECTORY: 'obj'
   NUGET_PACKAGES_DIRECTORY: '.nuget'
   SOURCE_CODE_PATH: '*/*/'
+  SOLUTION_DIRECTORY: 'microservices/Basket'
 
 cache:
   key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
@@ -56,10 +57,9 @@ build:
   image: mcr.microsoft.com/dotnet/core/sdk:3.1
   stage: build
   before_script:
-    - cd microservices/Basket
-    - dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+    - dotnet restore $SOLUTION_DIRECTORY --packages $NUGET_PACKAGES_DIRECTORY
   script:
-    - dotnet build --no-restore
+    - dotnet build $SOLUTION_DIRECTORY --no-restore
   only:
     refs:
     - branches
@@ -74,10 +74,8 @@ build:
 unit_test:
   image: mcr.microsoft.com/dotnet/core/sdk:3.1
   stage: test
-  before_script:
-    - cd microservices/Basket
   script:
-    - dotnet test Basket.UnitTests --no-restore
+    - dotnet test $SOLUTION_DIRECTORY/Basket.UnitTests --no-restore
   only:
     refs:
     - branches
@@ -95,10 +93,8 @@ functional_test:
     - rabbitmq:3
     - redis:latest
   stage: test
-  before_script:
-    - cd microservices/Basket
   script:
-    - dotnet test Basket.FunctionalTests --no-restore
+    - dotnet test $SOLUTION_DIRECTORY/Basket.FunctionalTests --no-restore
   only:
     refs:
     - branches
