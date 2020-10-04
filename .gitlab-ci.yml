@@ -25,6 +25,8 @@ pre-semantic-version:
   except:
     refs:
     - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   script:
     - npx semantic-release --generate-notes false --dry-run
   artifacts:
@@ -52,6 +54,8 @@ build:
   except:
     refs:
     - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
 
@@ -68,6 +72,8 @@ unit_test:
   except:
     refs:
     - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
 
@@ -87,6 +93,8 @@ functional_test:
   except:
     refs:
     - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
 
@@ -116,6 +124,14 @@ sonar_test:
     - echo $SONAR_PROJECT_VERSION
   script:
     - sonar-scanner --debug
+  only:
+    refs:
+    - branches
+  except:
+    refs:
+    - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
 
@@ -127,6 +143,14 @@ detect_secrets:
   script:
     - detect-secrets scan $SCAN_SOURCE >> .detect-secrets-log.json
     - jq . .detect-secrets-log.json -C
+  only:
+    refs:
+    - branches
+  except:
+    refs:
+    - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
 
@@ -157,6 +181,14 @@ package_docker:
             ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:latest
         docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:latest
       fi
+  only:
+    refs:
+    - branches
+  except:
+    refs:
+    - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
 
@@ -176,6 +208,14 @@ validate_docker:
     - echo $DOCK_VERSION    
   script:
     - klar ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
+  only:
+    refs:
+    - branches
+  except:
+    refs:
+    - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
 
@@ -188,6 +228,8 @@ release:
   except:
     refs:
     - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   script:
     - npx semantic-release
   artifacts:
