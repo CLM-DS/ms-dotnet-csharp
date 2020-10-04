@@ -4,6 +4,17 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCK_REG_GRP: "api"
   DOCK_IMG: "basket-api"
+  OBJECTS_DIRECTORY: 'obj'
+  NUGET_PACKAGES_DIRECTORY: '.nuget'
+  SOURCE_CODE_PATH: '*/*/'
+
+cache:
+  key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
+  paths:
+    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/project.assets.json'
+    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/*.csproj.nuget.*'
+    - '$NUGET_PACKAGES_DIRECTORY'
+
 
 stages:
   - pre-version
@@ -46,9 +57,9 @@ build:
   stage: build
   before_script:
     - cd microservices/Basket
-    - dotnet restore
+    - dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
   script:
-    - dotnet build
+    - dotnet build --no-restore
   only:
     refs:
     - branches
@@ -60,44 +71,44 @@ build:
   tags:
     - kubernetes
 
-# unit_test:
-#   image: mcr.microsoft.com/dotnet/core/sdk:3.1
-#   stage: test
-#   before_script:
-#     - cd microservices/Basket
-#   script:
-#     - dotnet test Basket.UnitTests
-#   only:
-#     refs:
-#     - branches
-#   except:
-#     refs:
-#     - tags
-#     variables:
-#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-#   tags:
-#     - kubernetes
+unit_test:
+  image: mcr.microsoft.com/dotnet/core/sdk:3.1
+  stage: test
+  before_script:
+    - cd microservices/Basket
+  script:
+    - dotnet test Basket.UnitTests --no-restore
+  only:
+    refs:
+    - branches
+  except:
+    refs:
+    - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+  tags:
+    - kubernetes
 
-# functional_test:
-#   image: mcr.microsoft.com/dotnet/core/sdk:3.1
-#   services:
-#     - rabbitmq:3
-#     - redis:latest
-#   stage: test
-#   before_script:
-#     - cd microservices/Basket
-#   script:
-#     - dotnet test Basket.FunctionalTests
-#   only:
-#     refs:
-#     - branches
-#   except:
-#     refs:
-#     - tags
-#     variables:
-#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-#   tags:
-#     - kubernetes
+functional_test:
+  image: mcr.microsoft.com/dotnet/core/sdk:3.1
+  services:
+    - rabbitmq:3
+    - redis:latest
+  stage: test
+  before_script:
+    - cd microservices/Basket
+  script:
+    - dotnet test Basket.FunctionalTests --no-restore
+  only:
+    refs:
+    - branches
+  except:
+    refs:
+    - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+  tags:
+    - kubernetes
 
 # # JOB para revision de calidad del codigo
 # sonar_test:
