@@ -4,8 +4,8 @@ plugins:
 - - "@semantic-release/changelog"
   - changelogFile: CHANGELOG.md
 - - '@semantic-release/git'
-  - message: 'RELEASE: ${nextRelease.version}'
-  - assets: ['CHANGELOG.md']
+  - message: "RELEASE: ${nextRelease.version}"
+    assets: ["CHANGELOG.md"]
 - - "@semantic-release/exec"
   - verifyReleaseCmd: "echo ${nextRelease.version} > VERSION.txt"
 - "@semantic-release/gitlab"
