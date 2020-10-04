@@ -276,6 +276,8 @@ rollback:
 release:
   image: clmdevops/semantic-release
   stage: release
+  script:
+    - npx semantic-release
   only:
     refs:
     - branches
@@ -284,8 +286,8 @@ release:
     - tags
     variables:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-  script:
-    - npx semantic-release
   artifacts:
     paths:
     - CHANGELOG.md
+  tags:
+    - kubernetes

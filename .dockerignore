@@ -1,4 +1,8 @@
+bin/
+obj/
+out/
 TestResults/
+.nuget/
 .gitignore
 .gitlab-ci.yml
 .releaserc.yml
