@@ -13,8 +13,9 @@ stages:
   - package
   - validate
   - deploy
-  - release
+  - testing
   - rollback
+  - release
 
 pre-semantic-version:
   image: clmdevops/semantic-release
@@ -59,13 +60,170 @@ build:
   tags:
     - kubernetes
 
-unit_test:
-  image: mcr.microsoft.com/dotnet/core/sdk:3.1
-  stage: test
-  before_script:
-    - cd microservices/Basket
+# unit_test:
+#   image: mcr.microsoft.com/dotnet/core/sdk:3.1
+#   stage: test
+#   before_script:
+#     - cd microservices/Basket
+#   script:
+#     - dotnet test Basket.UnitTests
+#   only:
+#     refs:
+#     - branches
+#   except:
+#     refs:
+#     - tags
+#     variables:
+#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+#   tags:
+#     - kubernetes
+
+# functional_test:
+#   image: mcr.microsoft.com/dotnet/core/sdk:3.1
+#   services:
+#     - rabbitmq:3
+#     - redis:latest
+#   stage: test
+#   before_script:
+#     - cd microservices/Basket
+#   script:
+#     - dotnet test Basket.FunctionalTests
+#   only:
+#     refs:
+#     - branches
+#   except:
+#     refs:
+#     - tags
+#     variables:
+#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+#   tags:
+#     - kubernetes
+
+# # JOB para revision de calidad del codigo
+# sonar_test:
+#   image: sonarsource/sonar-scanner-cli
+#   stage: test
+#   # allow_failure: true
+#   variables:
+#     SONAR_SOURCE: "microservices/Basket"
+#     SONAR_EXCLUSIONS: "**/bin/**,**/obj/**"
+#   before_script:
+#     # Validar que existe el archivo sonar-project.properties requerido.
+#     - |
+#       if [ -f sonar-project.properties ]
+#         then
+#           echo "Existe archivo sonar-project.properties."
+#           cat sonar-project.properties
+#         else
+#           echo "No existe archivo sonar-project.properties." ; exit 1
+#       fi
+#      # Validar la existencia de la variable sonar_source.
+#     - if [ -z "$SONAR_SOURCE" ]; then export SONAR_SOURCE="."; fi
+#     # Tipos administidos: NodeJS, Gradle, Maven
+#     - echo "Obteniendo la version de la app"
+#     - SONAR_PROJECT_VERSION=$(cat VERSION.txt)
+#     - echo $SONAR_PROJECT_VERSION
+#   script:
+#     - sonar-scanner --debug
+#   only:
+#     refs:
+#     - branches
+#   except:
+#     refs:
+#     - tags
+#     variables:
+#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+#   tags:
+#     - kubernetes
+
+# detect_secrets:
+#   image: clmdevops/detect-secrets:0.14.3
+#   stage: test
+#   variables:
+#     SCAN_SOURCE: "microservices/Basket"
+#   script:
+#     - detect-secrets scan $SCAN_SOURCE >> .detect-secrets-log.json
+#     - jq . .detect-secrets-log.json -C
+#   only:
+#     refs:
+#     - branches
+#   except:
+#     refs:
+#     - tags
+#     variables:
+#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+#   tags:
+#     - kubernetes
+
+# package_docker:
+#   image: docker:19.03.12
+#   stage: package
+#   services:
+#     - docker:19.03.12-dind
+#   before_script:
+#     - docker info
+#     - echo "Obteniendo la version de la app"
+#     - DOCK_VERSION=$(cat VERSION.txt)
+#     - echo $DOCK_VERSION
+#     # Login en docker registry
+#     - echo "Construyendo la imagen DOCKER de la APP"
+#     - docker login
+#         -u ${DOCK_REG_USER_GCP}
+#         -p "$(cat $DOCK_REG_PWD_GCP)"
+#         ${DOCK_REG_GCP}
+#   script:
+#     - |
+#       echo 'Crear tag de imagen docker'
+#       docker build -t ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} .
+#       docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
+#       if [ "$DOCKER_LATEST" = true ] ; then
+#         echo 'Crear tag de imagen docker latest'
+#         docker tag ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} \
+#             ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:latest
+#         docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:latest
+#       fi
+#   only:
+#     refs:
+#     - branches
+#   except:
+#     refs:
+#     - tags
+#     variables:
+#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+#   tags:
+#     - kubernetes
+
+# validate_docker:
+#   image: clmdevops/klar:2.4.0
+#   stage: validate
+#   variables:
+#     CLAIR_ADDR: "clairsvc"
+#     CLAIR_OUTPUT: "Low"
+#     CLAIR_THRESHOLD: "10"
+#     FORMAT_OUTPUa: "table"
+#     DOCKER_USER: $DOCK_REG_USER_GCP
+#   before_script:
+#     - export DOCKER_PASSWORD=$(cat $DOCK_REG_PWD_GCP)
+#     - echo "Obteniendo la version de la app"
+#     - DOCK_VERSION=$(cat VERSION.txt)
+#     - echo $DOCK_VERSION    
+#   script:
+#     - klar ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
+#   only:
+#     refs:
+#     - branches
+#   except:
+#     refs:
+#     - tags
+#     variables:
+#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+#   tags:
+#     - kubernetes
+
+deploy:
+  stage: deploy
   script:
-    - dotnet test Basket.UnitTests
+    - echo "Version is $(cat VERSION.txt)"
   only:
     refs:
     - branches
@@ -77,16 +235,10 @@ unit_test:
   tags:
     - kubernetes
 
-functional_test:
-  image: mcr.microsoft.com/dotnet/core/sdk:3.1
-  services:
-    - rabbitmq:3
-    - redis:latest
-  stage: test
-  before_script:
-    - cd microservices/Basket
+testing:
+  stage: testing
   script:
-    - dotnet test Basket.FunctionalTests
+    - echo "Job for Testing"
   only:
     refs:
     - branches
@@ -98,116 +250,11 @@ functional_test:
   tags:
     - kubernetes
 
-# JOB para revision de calidad del codigo
-sonar_test:
-  image: sonarsource/sonar-scanner-cli
-  stage: test
-  # allow_failure: true
-  variables:
-    SONAR_SOURCE: "microservices/Basket"
-    SONAR_EXCLUSIONS: "**/bin/**,**/obj/**"
-  before_script:
-    # Validar que existe el archivo sonar-project.properties requerido.
-    - |
-      if [ -f sonar-project.properties ]
-        then
-          echo "Existe archivo sonar-project.properties."
-          cat sonar-project.properties
-        else
-          echo "No existe archivo sonar-project.properties." ; exit 1
-      fi
-     # Validar la existencia de la variable sonar_source.
-    - if [ -z "$SONAR_SOURCE" ]; then export SONAR_SOURCE="."; fi
-    # Tipos administidos: NodeJS, Gradle, Maven
-    - echo "Obteniendo la version de la app"
-    - SONAR_PROJECT_VERSION=$(cat VERSION.txt)
-    - echo $SONAR_PROJECT_VERSION
+rollback:
+  stage: rollback
   script:
-    - sonar-scanner --debug
-  only:
-    refs:
-    - branches
-  except:
-    refs:
-    - tags
-    variables:
-      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-  tags:
-    - kubernetes
-
-detect_secrets:
-  image: clmdevops/detect-secrets:0.14.3
-  stage: test
-  variables:
-    SCAN_SOURCE: "microservices/Basket"
-  script:
-    - detect-secrets scan $SCAN_SOURCE >> .detect-secrets-log.json
-    - jq . .detect-secrets-log.json -C
-  only:
-    refs:
-    - branches
-  except:
-    refs:
-    - tags
-    variables:
-      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-  tags:
-    - kubernetes
-
-package_docker:
-  image: docker:19.03.12
-  stage: package
-  services:
-    - docker:19.03.12-dind
-  before_script:
-    - docker info
-    - echo "Obteniendo la version de la app"
-    - DOCK_VERSION=$(cat VERSION.txt)
-    - echo $DOCK_VERSION
-    # Login en docker registry
-    - echo "Construyendo la imagen DOCKER de la APP"
-    - docker login
-        -u ${DOCK_REG_USER_GCP}
-        -p "$(cat $DOCK_REG_PWD_GCP)"
-        ${DOCK_REG_GCP}
-  script:
-    - |
-      echo 'Crear tag de imagen docker'
-      docker build -t ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} .
-      docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
-      if [ "$DOCKER_LATEST" = true ] ; then
-        echo 'Crear tag de imagen docker latest'
-        docker tag ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION} \
-            ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:latest
-        docker push ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:latest
-      fi
-  only:
-    refs:
-    - branches
-  except:
-    refs:
-    - tags
-    variables:
-      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-  tags:
-    - kubernetes
-
-validate_docker:
-  image: clmdevops/klar:2.4.0
-  stage: validate
-  variables:
-    CLAIR_ADDR: "clairsvc"
-    CLAIR_OUTPUT: "Low"
-    CLAIR_THRESHOLD: "10"
-    FORMAT_OUTPUa: "table"
-    DOCKER_USER: $DOCK_REG_USER_GCP
-  before_script:
-    - export DOCKER_PASSWORD=$(cat $DOCK_REG_PWD_GCP)
-    - echo "Obteniendo la version de la app"
-    - DOCK_VERSION=$(cat VERSION.txt)
-    - echo $DOCK_VERSION    
-  script:
-    - klar ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
+    - echo "Job for Testing"
+  when: on_failure
   only:
     refs:
     - branches
