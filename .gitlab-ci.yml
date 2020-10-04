@@ -167,6 +167,7 @@ package_docker:
   stage: package
   services:
     - docker:19.03.12-dind
+  cache: {}
   before_script:
     - docker info
     - echo "Obteniendo la version de la app"
@@ -203,6 +204,7 @@ package_docker:
 validate_docker:
   image: clmdevops/klar:2.4.0
   stage: validate
+  cache: {}
   variables:
     CLAIR_ADDR: "clairsvc"
     CLAIR_OUTPUT: "Low"
@@ -229,6 +231,7 @@ validate_docker:
 
 deploy:
   stage: deploy
+  cache: {}
   script:
     - echo "Version is $(cat VERSION.txt)"
   only:
@@ -244,6 +247,7 @@ deploy:
 
 testing:
   stage: testing
+  cache: {}
   script:
     - echo "Job for Testing"
   only:
@@ -259,6 +263,7 @@ testing:
 
 rollback:
   stage: rollback
+  cache: {}
   script:
     - echo "Job for Testing"
   when: on_failure
@@ -276,6 +281,7 @@ rollback:
 release:
   image: clmdevops/semantic-release
   stage: release
+  cache: {}
   script:
     - npx semantic-release
   only:
