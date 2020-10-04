@@ -1,3 +1,10 @@
+## [1.3.1](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.3.0...v1.3.1) (2020-10-04)
+
+
+### Bug Fixes
+
+* dockerignore file ([6a51f1a](https://gitlab.com/apiservice-developments/testing-microservices/commit/6a51f1af7e3bcfbe1b5b3a4cc5d4322660dea81d))
+
 # [1.3.0](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.2.2...v1.3.0) (2020-10-04)
 
 
