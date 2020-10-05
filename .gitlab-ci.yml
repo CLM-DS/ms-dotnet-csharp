@@ -8,6 +8,9 @@ variables:
   NUGET_PACKAGES_DIRECTORY: '.nuget'
   SOURCE_CODE_PATH: '*/*/'
   SOLUTION_DIRECTORY: 'microservices/Basket'
+  KUBE_NAMESPACE: 'default'
+  RELEASE_NAME: 'basket-api'
+
 
 cache:
   key: $CI_COMMIT_REF_SLUG
@@ -230,10 +233,15 @@ validate_docker:
     - kubernetes
 
 deploy:
+  image: clmdevops/k8s-alpine:1.18.2
   stage: deploy
   cache: {}
   script:
     - echo "Version is $(cat VERSION.txt)"
+    - export APP_VERSION=$(cat VERSION.txt)
+    - k8s
+    - docker_registry_gcp
+    - deploy_gke
   only:
     refs:
     - branches
@@ -246,10 +254,12 @@ deploy:
     - kubernetes
 
 testing:
+  image: clmdevops/k8s-alpine:1.18.2
   stage: testing
   cache: {}
   script:
-    - echo "Job for Testing"
+    - helm test ${RELEASE_NAME} --namespace ${KUBE_NAMESPACE}
+    - kubectl delete pod ${RELEASE_NAME}-test-connection 
   only:
     refs:
     - branches
@@ -265,7 +275,11 @@ rollback:
   stage: rollback
   cache: {}
   script:
-    - echo "Job for Testing"
+    - echo "Realizar el rollback de la app a la version $RELEASE_NAME"
+    - helm history $RELEASE_NAME | grep deployed
+    - echo "Ejecutar comando de rollback con helm"
+    - helm rollback $RELEASE_NAME $(helm history $RELEASE_NAME | grep deployed | cut -f1) --wait
+    - helm status $RELEASE_NAME
   when: on_failure
   only:
     refs:
@@ -297,3 +311,33 @@ release:
     - CHANGELOG.md
   tags:
     - kubernetes
+
+.script_exec: &script_exec |
+ [[ "$TRACE" ]] && set -x
+
+  
+  function k8s() {
+    echo "export kubeconfig master"
+    export KUBECONFIG=$KUBECONFIG_BASKET
+    export GOOGLE_APPLICATION_CREDENTIALS=$GCP_CREDENTIALS_GKE
+  }
+
+  function docker_registry_gcp() {
+    kubectl -n ${KUBE_NAMESPACE} create secret docker-registry ${RELEASE_NAME} \
+        --docker-server="https://${DOCK_REG_GCP}" \
+        --docker-username=${DOCK_REG_USER_GCP} \
+        --docker-email=${DOCK_REG_EMAIL_GCP} \
+        --docker-password="$(cat $DOCK_REG_PWD_GCP)" || true
+  }
+
+  function deploy_gke() {
+    helm upgrade ${RELEASE_NAME} ./k8s/${RELEASE_NAME} --install --wait \
+      --namespace ${KUBE_NAMESPACE} \
+      --set image.repository=${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG} \
+      --set image.tag=${APP_VERSION} \
+      --set imagePullSecrets=${RELEASE_NAME} 
+  }
+
+
+
+
