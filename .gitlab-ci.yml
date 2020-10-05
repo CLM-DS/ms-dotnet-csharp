@@ -334,6 +334,7 @@ release:
   }
 
   function deploy_gke() {
+    sed -i "s/^appVersion:.*$/appVersion: ${APP_VERSION}/" ./k8s/${RELEASE_NAME}/Chart.yaml
     helm upgrade ${RELEASE_NAME} ./k8s/${RELEASE_NAME} --install --wait \
       --namespace ${KUBE_NAMESPACE} \
       --set image.repository=${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG} \
