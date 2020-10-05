@@ -10,6 +10,7 @@ variables:
   SOLUTION_DIRECTORY: 'microservices/Basket'
   KUBE_NAMESPACE: 'default'
   RELEASE_NAME: 'basket-api'
+  GCP_API_IPNAME: 'domain-apiservice'
 
 
 cache:
@@ -258,6 +259,7 @@ testing:
   stage: testing
   cache: {}
   script:
+    - set_k8s
     - helm test ${RELEASE_NAME} --namespace ${KUBE_NAMESPACE}
     - kubectl delete pod ${RELEASE_NAME}-test-connection 
   only:
@@ -275,6 +277,7 @@ rollback:
   stage: rollback
   cache: {}
   script:
+    - set_k8s
     - echo "Realizar el rollback de la app a la version $RELEASE_NAME"
     - helm history $RELEASE_NAME | grep deployed
     - echo "Ejecutar comando de rollback con helm"
@@ -335,7 +338,11 @@ release:
       --namespace ${KUBE_NAMESPACE} \
       --set image.repository=${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG} \
       --set image.tag=${APP_VERSION} \
-      --set imagePullSecrets=${RELEASE_NAME} 
+      --set imagePullSecrets=${RELEASE_NAME} \
+      --set service.type=NodePort \
+      --set ingress.enabled=true \
+      --set-string ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"=${GCP_API_IPNAME} \
+      --set-string ingress.annotations."networking\.gke\.io/managed-certificates"=${RELEASE_NAME}
   }
 
 

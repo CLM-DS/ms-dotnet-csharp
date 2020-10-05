@@ -1,0 +1,11 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.gke.io/v1beta2
+kind: ManagedCertificate
+metadata:
+  name: {{ include "basket-api.fullname" . }}
+spec:
+  domains:
+    {{- range .Values.ingress.hosts }}
+    - {{ .host | quote }}
+    {{- end }}
+{{- end }}

@@ -37,12 +37,12 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /swagger/index.html
+              port: {{ .Values.service.port }}
           readinessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /swagger/index.html
+              port: {{ .Values.service.port }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
