@@ -274,6 +274,7 @@ testing:
     - kubernetes
 
 rollback:
+  image: clmdevops/k8s-alpine:1.18.2
   stage: rollback
   cache: {}
   script:
