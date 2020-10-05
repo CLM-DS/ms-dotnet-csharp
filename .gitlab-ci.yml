@@ -239,7 +239,7 @@ deploy:
   script:
     - echo "Version is $(cat VERSION.txt)"
     - export APP_VERSION=$(cat VERSION.txt)
-    - k8s
+    - set_k8s
     - docker_registry_gcp
     - deploy_gke
   only:
@@ -316,7 +316,7 @@ release:
  [[ "$TRACE" ]] && set -x
 
   
-  function k8s() {
+  function set_k8s() {
     echo "export kubeconfig master"
     export KUBECONFIG=$KUBECONFIG_BASKET
     export GOOGLE_APPLICATION_CREDENTIALS=$GCP_CREDENTIALS_GKE
@@ -339,5 +339,7 @@ release:
   }
 
 
+before_script:
+  - *script_exec
 
 
