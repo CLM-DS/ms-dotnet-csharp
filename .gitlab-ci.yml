@@ -75,96 +75,96 @@ build:
   tags:
     - kubernetes
 
-# unit_test:
-#   image: mcr.microsoft.com/dotnet/core/sdk:3.1
-#   stage: test
-#   script:
-#     - dotnet test $SOLUTION_DIRECTORY/Basket.UnitTests
-#   only:
-#     refs:
-#     - branches
-#   except:
-#     refs:
-#     - tags
-#     variables:
-#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-#   tags:
-#     - kubernetes
+unit_test:
+  image: mcr.microsoft.com/dotnet/core/sdk:3.1
+  stage: test
+  script:
+    - dotnet test $SOLUTION_DIRECTORY/Basket.UnitTests
+  only:
+    refs:
+    - branches
+  except:
+    refs:
+    - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+  tags:
+    - kubernetes
 
-# functional_test:
-#   image: mcr.microsoft.com/dotnet/core/sdk:3.1
-#   services:
-#     - rabbitmq:3
-#     - redis:latest
-#   stage: test
-#   script:
-#     - dotnet test $SOLUTION_DIRECTORY/Basket.FunctionalTests
-#   only:
-#     refs:
-#     - branches
-#   except:
-#     refs:
-#     - tags
-#     variables:
-#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-#   tags:
-#     - kubernetes
+functional_test:
+  image: mcr.microsoft.com/dotnet/core/sdk:3.1
+  services:
+    - rabbitmq:3
+    - redis:latest
+  stage: test
+  script:
+    - dotnet test $SOLUTION_DIRECTORY/Basket.FunctionalTests
+  only:
+    refs:
+    - branches
+  except:
+    refs:
+    - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+  tags:
+    - kubernetes
 
-# # JOB para revision de calidad del codigo
-# sonar_test:
-#   image: sonarsource/sonar-scanner-cli
-#   stage: test
-#   # allow_failure: true
-#   variables:
-#     SONAR_SOURCE: "microservices/Basket"
-#     SONAR_EXCLUSIONS: "**/bin/**,**/obj/**"
-#   before_script:
-#     # Validar que existe el archivo sonar-project.properties requerido.
-#     - |
-#       if [ -f sonar-project.properties ]
-#         then
-#           echo "Existe archivo sonar-project.properties."
-#           cat sonar-project.properties
-#         else
-#           echo "No existe archivo sonar-project.properties." ; exit 1
-#       fi
-#      # Validar la existencia de la variable sonar_source.
-#     - if [ -z "$SONAR_SOURCE" ]; then export SONAR_SOURCE="."; fi
-#     # Tipos administidos: NodeJS, Gradle, Maven
-#     - echo "Obteniendo la version de la app"
-#     - SONAR_PROJECT_VERSION=$(cat VERSION.txt)
-#     - echo $SONAR_PROJECT_VERSION
-#   script:
-#     - sonar-scanner --debug
-#   only:
-#     refs:
-#     - branches
-#   except:
-#     refs:
-#     - tags
-#     variables:
-#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-#   tags:
-#     - kubernetes
+# JOB para revision de calidad del codigo
+sonar_test:
+  image: sonarsource/sonar-scanner-cli
+  stage: test
+  # allow_failure: true
+  variables:
+    SONAR_SOURCE: "microservices/Basket"
+    SONAR_EXCLUSIONS: "**/bin/**,**/obj/**"
+  before_script:
+    # Validar que existe el archivo sonar-project.properties requerido.
+    - |
+      if [ -f sonar-project.properties ]
+        then
+          echo "Existe archivo sonar-project.properties."
+          cat sonar-project.properties
+        else
+          echo "No existe archivo sonar-project.properties." ; exit 1
+      fi
+     # Validar la existencia de la variable sonar_source.
+    - if [ -z "$SONAR_SOURCE" ]; then export SONAR_SOURCE="."; fi
+    # Tipos administidos: NodeJS, Gradle, Maven
+    - echo "Obteniendo la version de la app"
+    - SONAR_PROJECT_VERSION=$(cat VERSION.txt)
+    - echo $SONAR_PROJECT_VERSION
+  script:
+    - sonar-scanner --debug
+  only:
+    refs:
+    - branches
+  except:
+    refs:
+    - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+  tags:
+    - kubernetes
 
-# detect_secrets:
-#   image: clmdevops/detect-secrets:0.14.3
-#   stage: test
-#   variables:
-#     SCAN_SOURCE: "microservices/Basket"
-#   script:
-#     - detect-secrets scan $SCAN_SOURCE >> .detect-secrets-log.json
-#     - jq . .detect-secrets-log.json -C
-#   only:
-#     refs:
-#     - branches
-#   except:
-#     refs:
-#     - tags
-#     variables:
-#       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-#   tags:
-#     - kubernetes
+detect_secrets:
+  image: clmdevops/detect-secrets:0.14.3
+  stage: test
+  variables:
+    SCAN_SOURCE: "microservices/Basket"
+  script:
+    - detect-secrets scan $SCAN_SOURCE >> .detect-secrets-log.json
+    - jq . .detect-secrets-log.json -C
+  only:
+    refs:
+    - branches
+  except:
+    refs:
+    - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+  tags:
+    - kubernetes
 
 package_docker:
   image: docker:19.03.12
