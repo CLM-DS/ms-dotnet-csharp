@@ -1,3 +1,10 @@
+## [1.3.2](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.3.1...v1.3.2) (2020-10-04)
+
+
+### Bug Fixes
+
+* delete cache from some jobs ([e25512b](https://gitlab.com/apiservice-developments/testing-microservices/commit/e25512b45ce3e17db67faa31843ef99ebfe43383))
+
 ## [1.3.1](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.3.0...v1.3.1) (2020-10-04)
 
 
