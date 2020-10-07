@@ -1,3 +1,10 @@
+## [1.4.1](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.4.0...v1.4.1) (2020-10-07)
+
+
+### Bug Fixes
+
+* change microservice code in netcore ([05e8392](https://gitlab.com/apiservice-developments/testing-microservices/commit/05e8392eba6232ddbb36e4cb68b7bf46ae5be4c0))
+
 # [1.4.0](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.3.2...v1.4.0) (2020-10-05)
 
 
