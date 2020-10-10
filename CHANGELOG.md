@@ -1,3 +1,16 @@
+# [1.5.0](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.4.1...v1.5.0) (2020-10-10)
+
+
+### Bug Fixes
+
+* include addons install ([f9c93fd](https://gitlab.com/apiservice-developments/testing-microservices/commit/f9c93fd663b0aa449e65fa892b19c4c0979b9364))
+* sleep after addons ([b69149c](https://gitlab.com/apiservice-developments/testing-microservices/commit/b69149ca74e3657861e3ca274b350364cd4ec330))
+
+
+### Features
+
+* manage multiple environments ([c328ee9](https://gitlab.com/apiservice-developments/testing-microservices/commit/c328ee9692e6717e4fce4805fcf9fe4357f40a6a))
+
 ## [1.4.1](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.4.0...v1.4.1) (2020-10-07)
 
 
