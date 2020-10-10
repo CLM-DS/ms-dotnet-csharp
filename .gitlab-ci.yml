@@ -278,7 +278,7 @@ deploy:qa:
 deploy:prod:
   <<: *job_deploy
   environment:
-      name: testing
+      name: production
   only:
     refs:
       - master
