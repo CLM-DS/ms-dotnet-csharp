@@ -278,7 +278,7 @@ deploy:qa:
 deploy:prod:
   <<: *job_deploy
   environment:
-      name: testing
+      name: production
   only:
     refs:
       - master
@@ -388,7 +388,7 @@ release:
     kubectl apply -f ./k8s/redis.yaml
     sleep 30
     sed -i "s/^appVersion:.*$/appVersion: ${APP_VERSION}/" ./k8s/${RELEASE_NAME}/Chart.yaml
-    helm upgrade ${RELEASE_NAME} ./k8s/${RELEASE_NAME} --install --wait \
+    helm upgrade ${RELEASE_NAME} ./k8s/${RELEASE_NAME} --install --wait --timeout 1m \
       --namespace ${KUBE_NAMESPACE} \
       --set image.repository=${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG} \
       --set image.tag=${APP_VERSION} \
