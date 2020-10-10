@@ -33,6 +33,25 @@ stages:
   - rollback
   - release
 
+.job_template: &job_deploy
+  image: clmdevops/k8s-alpine:1.18.2
+  stage: deploy
+  cache: {}
+  script:
+    - echo "Version is $(cat VERSION.txt)"
+    - export APP_VERSION=$(cat VERSION.txt)
+    - set_k8s
+    - docker_registry_gcp
+    - deploy_gke
+  except:
+    refs:
+    - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+  tags:
+    - kubernetes
+
+
 pre-semantic-version:
   image: clmdevops/semantic-release
   stage: pre-version
@@ -70,6 +89,7 @@ build:
   except:
     refs:
     - tags
+    - master
     variables:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
@@ -86,6 +106,7 @@ unit_test:
   except:
     refs:
     - tags
+    - master
     variables:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
@@ -105,6 +126,7 @@ functional_test:
   except:
     refs:
     - tags
+    - master
     variables:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
@@ -142,6 +164,7 @@ sonar_test:
   except:
     refs:
     - tags
+    - master
     variables:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
@@ -161,6 +184,7 @@ detect_secrets:
   except:
     refs:
     - tags
+    - master
     variables:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
@@ -200,6 +224,7 @@ package_docker:
   except:
     refs:
     - tags
+    - master
     variables:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
@@ -228,31 +253,35 @@ validate_docker:
   except:
     refs:
     - tags
+    - master
     variables:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
 
-deploy:
-  image: clmdevops/k8s-alpine:1.18.2
-  stage: deploy
-  cache: {}
-  script:
-    - echo "Version is $(cat VERSION.txt)"
-    - export APP_VERSION=$(cat VERSION.txt)
-    - set_k8s
-    - docker_registry_gcp
-    - deploy_gke
+deploy:dev:
+  <<: *job_deploy
+  environment:
+      name: develop
   only:
     refs:
-    - branches
-  except:
+      - develop
+
+deploy:qa:
+  <<: *job_deploy
+  environment:
+      name: testing
+  only:
     refs:
-    - tags
-    variables:
-      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
-  tags:
-    - kubernetes
+      - /release?\/.*/
+
+deploy:prod:
+  <<: *job_deploy
+  environment:
+      name: testing
+  only:
+    refs:
+      - master
 
 testing:
   image: clmdevops/k8s-alpine:1.18.2
@@ -264,7 +293,9 @@ testing:
     - kubectl delete pod ${RELEASE_NAME}-test-connection 
   only:
     refs:
-    - branches
+      - develop
+      - /release?\/.*/
+      - master
   except:
     refs:
     - tags
@@ -287,7 +318,9 @@ rollback:
   when: on_failure
   only:
     refs:
-    - branches
+      - develop
+      - /release?\/.*/
+      - master
   except:
     refs:
     - tags
@@ -319,11 +352,26 @@ release:
 .script_exec: &script_exec |
  [[ "$TRACE" ]] && set -x
 
-  
   function set_k8s() {
-    echo "export kubeconfig master"
-    export KUBECONFIG=$KUBECONFIG_BASKET
-    export GOOGLE_APPLICATION_CREDENTIALS=$GCP_CREDENTIALS_GKE
+    echo $CI_COMMIT_REF_SLUG
+    echo "Realizar la seleccion de carpeta de ambiente."
+    if [ $CI_COMMIT_REF_SLUG == "master" ]
+      then
+        export KUBECONFIG=$KUBECONFIG_BASKET_PROD
+        export GOOGLE_APPLICATION_CREDENTIALS=$GCP_CREDENTIALS_GKE
+
+    elif [[ $(echo "$CI_COMMIT_REF_SLUG" | grep -E ^release.*) ]]
+      then
+        export KUBECONFIG=$KUBECONFIG_BASKET_QA
+        export GOOGLE_APPLICATION_CREDENTIALS=$GCP_CREDENTIALS_GKE
+        export RELEASE_NAME=basket-api-qa
+
+    elif [[ $(echo "$CI_COMMIT_REF_SLUG" | grep develop) ]]
+      then
+        export KUBECONFIG=$KUBECONFIG_BASKET_DEV
+        export GOOGLE_APPLICATION_CREDENTIALS=$GCP_CREDENTIALS_GKE
+        export RELEASE_NAME=basket-api-dev
+    fi
   }
 
   function docker_registry_gcp() {
