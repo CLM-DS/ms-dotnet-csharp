@@ -386,6 +386,7 @@ release:
     echo "Desplegar los prerrequisitos"
     kubectl apply -f ./k8s/rabbitmq.yaml
     kubectl apply -f ./k8s/redis.yaml
+    sleep 30
     sed -i "s/^appVersion:.*$/appVersion: ${APP_VERSION}/" ./k8s/${RELEASE_NAME}/Chart.yaml
     helm upgrade ${RELEASE_NAME} ./k8s/${RELEASE_NAME} --install --wait \
       --namespace ${KUBE_NAMESPACE} \
