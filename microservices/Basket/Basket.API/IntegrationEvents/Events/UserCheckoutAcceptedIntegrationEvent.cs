@@ -1,5 +1,5 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using Microsoft.eShopOnContainers.Services.Basket.API.Model;
+﻿using Microsoft.Microservices.Events.EventBus.Events;
+using Microsoft.Microservices.Services.Basket.API.Model;
 using System;
 
 namespace Basket.API.IntegrationEvents.Events

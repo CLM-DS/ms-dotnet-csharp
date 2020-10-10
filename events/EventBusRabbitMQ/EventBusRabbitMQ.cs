@@ -1,8 +1,8 @@
 ﻿using Autofac;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Extensions;
+using Microsoft.Microservices.Events.EventBus;
+using Microsoft.Microservices.Events.EventBus.Abstractions;
+using Microsoft.Microservices.Events.EventBus.Events;
+using Microsoft.Microservices.Events.EventBus.Extensions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,7 +16,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
+namespace Microsoft.Microservices.Events.EventBusRabbitMQ
 {
     public class EventBusRabbitMQ : IEventBus, IDisposable
     {

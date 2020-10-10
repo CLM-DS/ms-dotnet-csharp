@@ -2,9 +2,8 @@
 using Basket.API.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.Services.Basket.API.Model;
-using Microsoft.eShopOnContainers.Services.Basket.API.Services;
+using Microsoft.Microservices.Events.EventBus.Abstractions;
+using Microsoft.Microservices.Services.Basket.API.Model;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -12,7 +11,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
+namespace Microsoft.Microservices.Services.Basket.API.Controllers
 {
     [Route("api/v1/[controller]")]
     //[Authorize]
@@ -20,19 +19,16 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API.Controllers
     public class BasketController : ControllerBase
     {
         private readonly IBasketRepository _repository;
-        private readonly IIdentityService _identityService;
         private readonly IEventBus _eventBus;
         private readonly ILogger<BasketController> _logger;
 
         public BasketController(
             ILogger<BasketController> logger,
             IBasketRepository repository,
-            IIdentityService identityService,
             IEventBus eventBus)
         {
             _logger = logger;
             _repository = repository;
-            _identityService = identityService;
             _eventBus = eventBus;
         }
 

@@ -1,13 +1,13 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.Services.Basket.API.IntegrationEvents.Events;
-using Microsoft.eShopOnContainers.Services.Basket.API.Model;
+﻿using Microsoft.Microservices.Events.EventBus.Abstractions;
+using Microsoft.Microservices.Services.Basket.API.IntegrationEvents.Events;
+using Microsoft.Microservices.Services.Basket.API.Model;
 using Microsoft.Extensions.Logging;
 using Serilog.Context;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Microsoft.eShopOnContainers.Services.Basket.API.IntegrationEvents.EventHandling
+namespace Microsoft.Microservices.Services.Basket.API.IntegrationEvents.EventHandling
 {
     public class ProductPriceChangedIntegrationEventHandler : IIntegrationEventHandler<ProductPriceChangedIntegrationEvent>
     {

@@ -1,3 +1,26 @@
+## [1.4.1](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.4.0...v1.4.1) (2020-10-07)
+
+
+### Bug Fixes
+
+* change microservice code in netcore ([05e8392](https://gitlab.com/apiservice-developments/testing-microservices/commit/05e8392eba6232ddbb36e4cb68b7bf46ae5be4c0))
+
+# [1.4.0](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.3.2...v1.4.0) (2020-10-05)
+
+
+### Bug Fixes
+
+* helm test and helm appversion ([04ef3f0](https://gitlab.com/apiservice-developments/testing-microservices/commit/04ef3f04335d947f689a460971c7b48a6a2ef343))
+* pipeline functions ([dd80d01](https://gitlab.com/apiservice-developments/testing-microservices/commit/dd80d012106396627150b6cec3559a4ba98c4c77))
+* rollback job image ([5b6cff4](https://gitlab.com/apiservice-developments/testing-microservices/commit/5b6cff4e59e9eda9ea50b3810a4ca63708dc0903))
+
+
+### Features
+
+* deploy, testing and rollback jobs ([26faede](https://gitlab.com/apiservice-developments/testing-microservices/commit/26faededd40be8ed34db5d828c1a017f3c64585d))
+* enable others jobs ([837fc17](https://gitlab.com/apiservice-developments/testing-microservices/commit/837fc1712ccfecc1f9350848f5194f6e6f492908))
+* managedcertificate gcp and ingress ([de3ff8e](https://gitlab.com/apiservice-developments/testing-microservices/commit/de3ff8e410e91a8bf27691677c6f3bb0dbdb7f49))
+
 ## [1.3.2](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.3.1...v1.3.2) (2020-10-04)
 
 

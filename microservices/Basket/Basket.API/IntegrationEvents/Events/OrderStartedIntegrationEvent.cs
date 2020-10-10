@@ -1,4 +1,4 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
+﻿using Microsoft.Microservices.Events.EventBus.Events;
 
 namespace Basket.API.IntegrationEvents.Events
 {

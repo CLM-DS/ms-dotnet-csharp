@@ -1,5 +1,5 @@
 ﻿using Basket.FunctionalTests.Base;
-using Microsoft.eShopOnContainers.Services.Basket.API.Model;
+using Microsoft.Microservices.Services.Basket.API.Model;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;

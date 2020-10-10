@@ -1,5 +1,4 @@
-﻿using Basket.API.Infrastructure.Middlewares;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -9,7 +8,7 @@ using System;
 using System.IO;
 using System.Net;
 
-namespace Microsoft.eShopOnContainers.Services.Basket.API
+namespace Microsoft.Microservices.Services.Basket.API
 {
     public class Program
     {
@@ -61,10 +60,6 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
 
                 })
                 .ConfigureAppConfiguration(x => x.AddConfiguration(configuration))
-                .UseFailing(options => {
-                    options.ConfigPath = "/Failing";
-                    options.NotFilteredPaths.AddRange(new[] {"/hc","/liveness"});
-                })
                 .UseStartup<Startup>()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseSerilog()

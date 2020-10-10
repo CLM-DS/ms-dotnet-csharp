@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Basket.API
+﻿namespace Microsoft.Microservices.Services.Basket.API
 {
     public class BasketSettings
     {

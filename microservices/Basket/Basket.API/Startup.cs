@@ -1,26 +1,23 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Basket.API.Infrastructure.Filters;
-using Basket.API.Infrastructure.Middlewares;
 using Basket.API.IntegrationEvents.EventHandling;
 using Basket.API.IntegrationEvents.Events;
 using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.ServiceBus;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBusServiceBus;
-using Microsoft.eShopOnContainers.Services.Basket.API.Controllers;
-using Microsoft.eShopOnContainers.Services.Basket.API.Infrastructure.Repositories;
-using Microsoft.eShopOnContainers.Services.Basket.API.IntegrationEvents.EventHandling;
-using Microsoft.eShopOnContainers.Services.Basket.API.IntegrationEvents.Events;
-using Microsoft.eShopOnContainers.Services.Basket.API.Model;
-using Microsoft.eShopOnContainers.Services.Basket.API.Services;
+using Microsoft.Microservices.Events.EventBus;
+using Microsoft.Microservices.Events.EventBus.Abstractions;
+using Microsoft.Microservices.Events.EventBusRabbitMQ;
+using Microsoft.Microservices.Events.EventBusServiceBus;
+using Microsoft.Microservices.Services.Basket.API.Controllers;
+using Microsoft.Microservices.Services.Basket.API.Infrastructure.Repositories;
+using Microsoft.Microservices.Services.Basket.API.IntegrationEvents.EventHandling;
+using Microsoft.Microservices.Services.Basket.API.IntegrationEvents.Events;
+using Microsoft.Microservices.Services.Basket.API.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -30,14 +27,10 @@ using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using GrpcBasket;
-using Microsoft.AspNetCore.Http.Features;
-using Serilog;
 
-namespace Microsoft.eShopOnContainers.Services.Basket.API
+namespace Microsoft.Microservices.Services.Basket.API
 {
     public class Startup
     {
@@ -69,35 +62,14 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
 
             services.AddSwaggerGen(options =>
             {
-                options.DescribeAllEnumsAsStrings();
+                //options.DescribeAllEnumsAsStrings();
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "eShopOnContainers - Basket HTTP API",
                     Version = "v1",
                     Description = "The Basket Service HTTP API"
                 });
-
-                /*options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.OAuth2,
-                    Flows = new OpenApiOAuthFlows()
-                    {
-                        Implicit = new OpenApiOAuthFlow()
-                        {
-                            AuthorizationUrl = new Uri($"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
-                            TokenUrl = new Uri($"{Configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
-                            Scopes = new Dictionary<string, string>()
-                            {
-                                { "basket", "Basket API" }
-                            }
-                        }
-                    }
-                });*/
-
-                //options.OperationFilter<AuthorizeCheckOperationFilter>();
             });
-
-            //ConfigureAuthService(services);
 
             services.AddCustomHealthCheck(Configuration);
 
@@ -178,7 +150,6 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
             });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IBasketRepository, RedisBasketRepository>();
-            services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddOptions();
 
@@ -252,37 +223,6 @@ namespace Microsoft.eShopOnContainers.Services.Basket.API
             services.AddApplicationInsightsTelemetry(Configuration);
             services.AddApplicationInsightsKubernetesEnricher();
         }
-
-        /*private void ConfigureAuthService(IServiceCollection services)
-        {
-             // prevent from mapping "sub" claim to nameidentifier.
-             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
-
-             var identityUrl = Configuration.GetValue<string>("IdentityUrl");
-
-             services.AddAuthentication(options =>
-             {
-                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-             }).AddJwtBearer(options =>
-             {
-                 options.Authority = identityUrl;
-                 options.RequireHttpsMetadata = false;
-                 options.Audience = "basket";
-             });
-        }*/
-
-        /*protected virtual void ConfigureAuth(IApplicationBuilder app)
-        {
-            if (Configuration.GetValue<bool>("UseLoadTest"))
-            {
-                app.UseMiddleware<ByPassAuthMiddleware>();
-            }
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-        }*/
 
         private void RegisterEventBus(IServiceCollection services)
         {

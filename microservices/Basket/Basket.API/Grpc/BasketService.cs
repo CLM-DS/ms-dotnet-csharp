@@ -1,6 +1,6 @@
 ﻿using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.eShopOnContainers.Services.Basket.API.Model;
+using Microsoft.Microservices.Services.Basket.API.Model;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
