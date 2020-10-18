@@ -1,3 +1,18 @@
+# [1.6.0-dev.1](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.5.0...v1.6.0-dev.1) (2020-10-18)
+
+
+### Bug Fixes
+
+* docker jobs ([27cd2cd](https://gitlab.com/apiservice-developments/testing-microservices/commit/27cd2cd5f3a090183eaa19cff8c3642d888aa390))
+* environment for prod ([d072220](https://gitlab.com/apiservice-developments/testing-microservices/commit/d072220082bee8cffd1937569bbb3314ecd633ae))
+* helm timeout ([e6e6d59](https://gitlab.com/apiservice-developments/testing-microservices/commit/e6e6d59dd45bf4384ffc53a765a5cd2f6fa1c645))
+* modify releasename for other branches ([37dc1b9](https://gitlab.com/apiservice-developments/testing-microservices/commit/37dc1b9769c1a1402ba332e77a424c10af5bc431))
+
+
+### Features
+
+* new pipelines functions ([f83304a](https://gitlab.com/apiservice-developments/testing-microservices/commit/f83304a3b48ac563f2bc3d50577d67f746c969dc))
+
 # [1.5.0](https://gitlab.com/apiservice-developments/testing-microservices/compare/v1.4.1...v1.5.0) (2020-10-10)
 
 
