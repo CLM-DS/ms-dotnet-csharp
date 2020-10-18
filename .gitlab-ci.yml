@@ -51,7 +51,6 @@ stages:
   tags:
     - kubernetes
 
-
 pre-semantic-version:
   image: clmdevops/semantic-release
   stage: pre-version
@@ -71,10 +70,21 @@ pre-semantic-version:
   tags:
     - kubernetes
 
-# build:
-#   stage: build
-#   script:
-#     - echo "Version is $(cat VERSION.txt)"
+generate-non-semantic-version:
+  stage: fetch-version
+  except:
+    refs:
+      - master
+      - develop
+      - /release?\/.*/
+      - tags
+    variables:
+      - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
+  script:
+    - echo build-$CI_PIPELINE_ID > VERSION.txt
+  artifacts:
+    paths:
+    - VERSION.txt
 
 build:
   image: mcr.microsoft.com/dotnet/core/sdk:3.1
@@ -132,7 +142,6 @@ functional_test:
   tags:
     - kubernetes
 
-# JOB para revision de calidad del codigo
 sonar_test:
   image: sonarsource/sonar-scanner-cli
   stage: test
@@ -337,10 +346,12 @@ release:
     - npx semantic-release
   only:
     refs:
-    - branches
+      - master
+      - develop
+      - /release?\/.*/
   except:
     refs:
-    - tags
+      - tags
     variables:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   artifacts:
