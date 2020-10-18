@@ -229,11 +229,12 @@ package_docker:
       fi
   only:
     refs:
-    - branches
+      - master
+      - develop
+      - /release?\/.*/
   except:
     refs:
     - tags
-    - master
     variables:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
@@ -258,11 +259,12 @@ validate_docker:
     - klar ${DOCK_REG_GCP}/${DOCK_REG_GRP}/${DOCK_IMG}:${DOCK_VERSION}
   only:
     refs:
-    - branches
+      - master
+      - develop
+      - /release?\/.*/
   except:
     refs:
     - tags
-    - master
     variables:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
