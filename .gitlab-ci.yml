@@ -248,7 +248,7 @@ validate_docker:
     CLAIR_ADDR: "clairsvc"
     CLAIR_OUTPUT: "Low"
     CLAIR_THRESHOLD: "10"
-    FORMAT_OUTPUa: "table"
+    FORMAT_OUTPUT: "table"
     DOCKER_USER: $DOCK_REG_USER_GCP
   before_script:
     - export DOCKER_PASSWORD=$(cat $DOCK_REG_PWD_GCP)
