@@ -375,13 +375,13 @@ release:
       then
         export KUBECONFIG=$KUBECONFIG_BASKET_QA
         export GOOGLE_APPLICATION_CREDENTIALS=$GCP_CREDENTIALS_GKE
-        export RELEASE_NAME=basket-api-qa
+        # export RELEASE_NAME=basket-api-qa
 
     elif [[ $(echo "$CI_COMMIT_REF_SLUG" | grep develop) ]]
       then
         export KUBECONFIG=$KUBECONFIG_BASKET_DEV
         export GOOGLE_APPLICATION_CREDENTIALS=$GCP_CREDENTIALS_GKE
-        export RELEASE_NAME=basket-api-dev
+        # export RELEASE_NAME=basket-api-dev
     fi
   }
 
