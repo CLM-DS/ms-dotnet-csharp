@@ -71,7 +71,7 @@ pre-semantic-version:
     - kubernetes
 
 generate-non-semantic-version:
-  stage: fetch-version
+  stage: pre-version
   except:
     refs:
       - master
