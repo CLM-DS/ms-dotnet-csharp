@@ -10,10 +10,8 @@ plugins:
   - message: "RELEASE: ${nextRelease.version}"
     assets: ["CHANGELOG.md"]
 branches:
-- name: 'master' 
+- name: 'master'
 - name: 'develop'
-  channel: 'develop'
   prerelease: 'dev'
-- name: 'release/qa'
-  channel: 'release/qa'
-  prerelease: 'qa'
+- name: '(release)(\/[0-9A-Za-z-]+)'
+  prerelease: 'rc'
