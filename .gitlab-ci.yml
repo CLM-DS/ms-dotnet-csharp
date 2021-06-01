@@ -48,6 +48,7 @@ stages:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
+    - docker
 
 pre-semantic-version:
   image: clmdevops/semantic-release
@@ -69,6 +70,7 @@ pre-semantic-version:
       - VERSION.txt
   tags:
     - kubernetes
+    - docker
 
 generate-non-semantic-version:
   stage: pre-version
@@ -104,6 +106,7 @@ build:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
+    - docker
 
 unit_test:
   image: mcr.microsoft.com/dotnet/core/sdk:3.1
@@ -121,6 +124,7 @@ unit_test:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
+    - docker
 
 functional_test:
   image: mcr.microsoft.com/dotnet/core/sdk:3.1
@@ -141,6 +145,7 @@ functional_test:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
+    - docker
 
 sonar_test:
   image: sonarsource/sonar-scanner-cli
@@ -178,6 +183,7 @@ sonar_test:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
+    - docker
 
 detect_secrets:
   image: clmdevops/detect-secrets:0.14.3
@@ -198,6 +204,7 @@ detect_secrets:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
+    - docker
 
 package_docker:
   image: docker:19.03.12
@@ -239,6 +246,7 @@ package_docker:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
+    - docker
 
 validate_docker:
   image: clmdevops/klar:2.4.0
@@ -269,6 +277,7 @@ validate_docker:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
+    - docker
 
 deploy:dev:
   <<: *job_deploy
@@ -314,6 +323,7 @@ testing:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
+    - docker
 
 rollback:
   image: clmdevops/k8s-alpine:1.18.2
@@ -339,6 +349,7 @@ rollback:
       - $CI_COMMIT_TITLE =~ /^RELEASE:.+$/
   tags:
     - kubernetes
+    - docker
 
 release:
   image: clmdevops/semantic-release
@@ -361,6 +372,7 @@ release:
     - CHANGELOG.md
   tags:
     - kubernetes
+    - docker
 
 .script_exec: &script_exec |
  [[ "$TRACE" ]] && set -x
